@@ -8,7 +8,7 @@ from src.data_utils import get_test_transform, load_classes
 
 # Set constants
 MODEL_PATH = 'model/best_model_noFrezzing.pth (2).tar' # Replace with appropraite checkpoint file path
-CLASS_PATH = 'meta/classes.txt'
+CLASS_PATH = 'meta/classesTV.txt'
 
 app = Flask(__name__)
 
