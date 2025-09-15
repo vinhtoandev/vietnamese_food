@@ -5,6 +5,7 @@ from PIL import Image
 from main import DEVICE, DTYPE, FOOD101_CLASSES
 from src.mobilenet import MyMobileNet
 from src.data_utils import get_test_transform, load_classes
+import base64
 
 # Set constants
 MODEL_PATH = 'model/best_model_noFrezzing.pth (2).tar' # Replace with appropraite checkpoint file path
@@ -73,15 +74,28 @@ def index():
     """Render the main page."""
     return render_template('index.html')
 
+# @app.route('/predict', methods=['POST'])
+# def predict():
+#     """Handle prediction requests."""
+#     if request.method == 'POST':
+#         # Receive and read file from request
+#         file = request.files['file']
+#         img_bytes = file.read()
+#         class_id, class_name = get_prediction(img_bytes)
+#         return jsonify({'class_id': class_id, 'class_name': class_name})
 @app.route('/predict', methods=['POST'])
 def predict():
-    """Handle prediction requests."""
-    if request.method == 'POST':
-        # Receive and read file from request
-        file = request.files['file']
-        img_bytes = file.read()
-        class_id, class_name = get_prediction(img_bytes)
-        return jsonify({'class_id': class_id, 'class_name': class_name})
+    data = request.get_json()
+    if not data or "image" not in data:
+        return jsonify({"error": "No image provided"}), 400
+
+    image_b64 = data["image"]
+    img_bytes = base64.b64decode(image_b64)
+
+    class_id, class_name = get_prediction(img_bytes)
+    return jsonify({'class_id': class_id, 'class_name': class_name})
+
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
